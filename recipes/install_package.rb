@@ -16,6 +16,8 @@ when 'debian'
     uri node['zabbix']['agent']['package']['repo_uri']
     components ['main']
     key node['zabbix']['agent']['package']['repo_key']
+    signed_by false  # Chef 18.7.3 fix TargetIO error
+
   end
 
   package 'zabbix-agent' do

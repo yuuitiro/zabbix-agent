@@ -12,10 +12,32 @@ when 'windows'
   include_recipe 'chocolatey'
   chocolatey_package 'zabbix-agent'
 when 'debian'
-  apt_repository 'zabbix' do
-    uri node['zabbix']['agent']['package']['repo_uri']
-    components ['main']
-    key node['zabbix']['agent']['package']['repo_key']
+  if platform?('ubuntu') && node['platform_version'].to_f >= 24.0
+    directory '/etc/apt/keyrings' do
+      owner 'root'
+      group 'root'
+      mode '0755'
+      recursive true
+      action :create
+    end
+
+    execute 'download-zabbix-gpg-key' do
+      command "curl -fsSL #{node['zabbix']['agent']['package']['repo_key']} -o /etc/apt/keyrings/zabbix.gpg"
+      not_if { ::File.exist?('/etc/apt/keyrings/zabbix.gpg') }
+    end
+
+    apt_repository 'zabbix' do
+      uri node['zabbix']['agent']['package']['repo_uri']
+      components ['main']
+      key '/etc/apt/keyrings/zabbix.gpg'
+      trusted true
+    end
+  else
+    apt_repository 'zabbix' do
+      uri node['zabbix']['agent']['package']['repo_uri']
+      components ['main']
+      key node['zabbix']['agent']['package']['repo_key']
+    end
   end
 
   package 'zabbix-agent' do

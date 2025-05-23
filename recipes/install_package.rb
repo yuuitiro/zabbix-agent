@@ -23,13 +23,22 @@ when 'debian'
 
     execute 'download-and-dearmor-zabbix-gpg-key' do
       command "curl -fsSL #{node['zabbix']['agent']['package']['repo_key']} | gpg --dearmor | tee /etc/apt/keyrings/zabbix.gpg > /dev/null"
-      not_if { ::File.exist?('/etc/apt/keyrings/zabbix.gpg') }
+      creates '/etc/apt/keyrings/zabbix.gpg'
+      notifies :create, 'file[/etc/apt/keyrings/zabbix.gpg]', :immediately
     end
 
     file '/etc/apt/keyrings/zabbix.gpg' do
       owner 'root'
       group 'root'
       mode '0644'
+      action :nothing
+    end
+
+    ruby_block 'wait-for-gpg-key' do
+      block do
+        raise "GPG key file not found at /etc/apt/keyrings/zabbix.gpg" unless ::File.exist?('/etc/apt/keyrings/zabbix.gpg')
+      end
+      action :run
     end
 
     apt_repository 'zabbix' do
@@ -37,6 +46,7 @@ when 'debian'
       components ['main']
       key '/etc/apt/keyrings/zabbix.gpg'
       trusted true
+      subscribes :add, 'ruby_block[wait-for-gpg-key]', :immediately
     end
   else
     apt_repository 'zabbix' do

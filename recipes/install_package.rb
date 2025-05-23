@@ -13,12 +13,26 @@ when 'windows'
   chocolatey_package 'zabbix-agent'
 when 'debian'
   if platform?('ubuntu') && node['platform_version'].to_f >= 24.0
+    directory '/etc/apt/keyrings' do
+      owner 'root'
+      group 'root'
+      mode '0755'
+      action :create
+    end
+
+    remote_file '/etc/apt/keyrings/zabbix.gpg' do
+      source node['zabbix']['agent']['package']['repo_key']
+      owner 'root'
+      group 'root'
+      mode '0644'
+      action :create_if_missing
+    end
+
     apt_repository 'zabbix' do
       uri node['zabbix']['agent']['package']['repo_uri']
       components ['main']
-      key node['zabbix']['agent']['package']['repo_key']
-      keyring '/etc/apt/keyrings/zabbix.gpg'
-      trusted true
+      signed_by '/etc/apt/keyrings/zabbix.gpg'
+      action :add
     end
   else
     apt_repository 'zabbix' do

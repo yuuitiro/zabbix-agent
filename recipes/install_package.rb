@@ -21,9 +21,15 @@ when 'debian'
       action :create
     end
 
-    execute 'download-zabbix-gpg-key' do
-      command "curl -fsSL #{node['zabbix']['agent']['package']['repo_key']} -o /etc/apt/keyrings/zabbix.gpg"
+    execute 'download-and-dearmor-zabbix-gpg-key' do
+      command "curl -fsSL #{node['zabbix']['agent']['package']['repo_key']} | gpg --dearmor | tee /etc/apt/keyrings/zabbix.gpg > /dev/null"
       not_if { ::File.exist?('/etc/apt/keyrings/zabbix.gpg') }
+    end
+
+    file '/etc/apt/keyrings/zabbix.gpg' do
+      owner 'root'
+      group 'root'
+      mode '0644'
     end
 
     apt_repository 'zabbix' do

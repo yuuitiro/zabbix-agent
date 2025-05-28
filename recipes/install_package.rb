@@ -12,7 +12,7 @@ when 'windows'
   include_recipe 'chocolatey'
   chocolatey_package 'zabbix-agent'
 when 'debian'
-  if platform?('ubuntu') && node['platform_version'].to_f >= 22.0
+  if platform?('ubuntu') && node['platform_version'].to_f >= 20.04
     directory '/etc/apt/keyrings' do
       owner 'root'
       group 'root'

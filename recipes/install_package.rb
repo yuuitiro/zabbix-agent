@@ -30,7 +30,6 @@ when 'debian'
       group 'root'
       mode '0644'
       action :create_if_missing
-      sensitive new_resource.sensitive
       not_if { ::File.exist?(keyring_gpg) }
       notifies :run, 'execute[dearmor_zabbix_key]', :immediately
     end

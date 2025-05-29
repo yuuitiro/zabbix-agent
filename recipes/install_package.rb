@@ -13,6 +13,10 @@ when 'windows'
   chocolatey_package 'zabbix-agent'
 when 'debian'
   if platform?('ubuntu') && node['platform_version'].to_f >= 20.04
+    # ues signed_by for Ubuntu 20.04 and later
+    keyring_asc = "/etc/apt/keyrings/zabbix.asc"
+    keyring_gpg = "/etc/apt/keyrings/zabbix.gpg"
+
     directory '/etc/apt/keyrings' do
       owner 'root'
       group 'root'
@@ -20,18 +24,27 @@ when 'debian'
       action :create
     end
 
-    remote_file '/etc/apt/keyrings/zabbix.gpg' do
+    remote_file keyring_asc do
       source node['zabbix']['agent']['package']['repo_key']
       owner 'root'
       group 'root'
       mode '0644'
       action :create_if_missing
+      sensitive new_resource.sensitive
+      not_if { ::File.exist?(keyring_gpg) }
+      notifies :run, 'execute[dearmor_zabbix_key]', :immediately
+    end
+
+    execute 'dearmor_zabbix_key' do
+      command "gpg --batch --yes --dearmor -o #{keyring_gpg} #{keyring_asc}"
+      action :nothing
     end
 
     apt_repository 'zabbix' do
       uri node['zabbix']['agent']['package']['repo_uri']
       components ['main']
-      signed_by '/etc/apt/keyrings/zabbix.gpg'
+      key nil
+      signed_by keyring_gpg
       action :add
     end
   else

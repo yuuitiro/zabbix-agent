@@ -12,7 +12,7 @@ when 'windows'
   include_recipe 'chocolatey'
   chocolatey_package 'zabbix-agent'
 when 'debian'
-  if platform?('ubuntu') && node['platform_version'].to_f >= 20.04
+  if platform?('ubuntu') && node['platform_version'].to_f >= 18.04
     # ues signed_by for Ubuntu 20.04 and later
     keyring_asc = "/etc/apt/keyrings/zabbix.asc"
     keyring_gpg = "/etc/apt/keyrings/zabbix.gpg"

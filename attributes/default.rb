@@ -113,14 +113,14 @@ when 'debian'
   default['zabbix']['agent']['package']['repo_key'] = 'http://repo.zabbix.com/zabbix-official-repo.key'
 when 'rhel'
   default['zabbix']['agent']['package']['repo_uri'] = "http://repo.zabbix.com/zabbix/#{node['zabbix']['agent']['version']}/rhel/$releasever/$basearch/"
-  default['zabbix']['agent']['package']['repo_key'] = 'http://repo.zabbix.com/RPM-GPG-KEY-ZABBIX'
+  default['zabbix']['agent']['package']['repo_key'] = 'https://repo.zabbix.com/zabbix-official-repo.key'
 when 'amazon'
   # current Amazon AMI based on RHEL6 at the moment
   default['zabbix']['agent']['package']['repo_uri'] = "http://repo.zabbix.com/zabbix/#{node['zabbix']['agent']['version']}/rhel/6/$basearch/"
-  default['zabbix']['agent']['package']['repo_key'] = 'http://repo.zabbix.com/RPM-GPG-KEY-ZABBIX'
+  default['zabbix']['agent']['package']['repo_key'] = 'https://repo.zabbix.com/zabbix-official-repo.key'
 when 'fedora'
   default['zabbix']['agent']['package']['repo_uri'] = "http://repo.zabbix.com/zabbix/#{node['zabbix']['agent']['version']}/rhel/7/$basearch/"
-  default['zabbix']['agent']['package']['repo_key'] = 'http://repo.zabbix.com/RPM-GPG-KEY-ZABBIX'
+  default['zabbix']['agent']['package']['repo_key'] = 'https://repo.zabbix.com/zabbix-official-repo.key'
 end
 
 # prebuild install

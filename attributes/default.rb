@@ -25,7 +25,7 @@ else
   default['zabbix']['agent']['scripts'] = '/etc/zabbix/scripts'
 end
 
-default['zabbix']['agent']['version']           = '3.0.29'
+default['zabbix']['agent']['version']           = '6.4'
 default['zabbix']['agent']['servers']           = ['zabbix']
 default['zabbix']['agent']['servers_active']    = ['zabbix']
 
@@ -109,26 +109,26 @@ default['zabbix']['agent']['tar_file'] = tar
 # package install
 case node['platform_family']
 when 'debian'
-  default['zabbix']['agent']['package']['repo_uri'] = "http://repo.zabbix.com/zabbix/3.0/#{node['platform']}/"
+  default['zabbix']['agent']['package']['repo_uri'] = "http://repo.zabbix.com/zabbix/#{node['zabbix']['agent']['version']}/#{node['platform']}/"
   default['zabbix']['agent']['package']['repo_key'] = 'http://repo.zabbix.com/zabbix-official-repo.key'
 when 'rhel'
-  default['zabbix']['agent']['package']['repo_uri'] = 'http://repo.zabbix.com/zabbix/3.0/rhel/$releasever/$basearch/'
+  default['zabbix']['agent']['package']['repo_uri'] = "http://repo.zabbix.com/zabbix/#{node['zabbix']['agent']['version']}/rhel/$releasever/$basearch/"
   default['zabbix']['agent']['package']['repo_key'] = 'http://repo.zabbix.com/RPM-GPG-KEY-ZABBIX'
 when 'amazon'
   # current Amazon AMI based on RHEL6 at the moment
-  default['zabbix']['agent']['package']['repo_uri'] = 'http://repo.zabbix.com/zabbix/3.0/rhel/6/$basearch/'
+  default['zabbix']['agent']['package']['repo_uri'] = "http://repo.zabbix.com/zabbix/#{node['zabbix']['agent']['version']}/rhel/6/$basearch/"
   default['zabbix']['agent']['package']['repo_key'] = 'http://repo.zabbix.com/RPM-GPG-KEY-ZABBIX'
 when 'fedora'
-  default['zabbix']['agent']['package']['repo_uri'] = 'http://repo.zabbix.com/zabbix/3.0/rhel/7/$basearch/'
+  default['zabbix']['agent']['package']['repo_uri'] = "http://repo.zabbix.com/zabbix/#{node['zabbix']['agent']['version']}/rhel/7/$basearch/"
   default['zabbix']['agent']['package']['repo_key'] = 'http://repo.zabbix.com/RPM-GPG-KEY-ZABBIX'
 end
 
 # prebuild install
 prebuild_url = 'https://www.zabbix.com/downloads/'
 arch = node['kernel']['machine'] == 'x86_64' ? 'amd64' : 'i386'
-default['zabbix']['agent']['prebuild_file'] = "zabbix_agent-#{version}-linux-3.0-#{arch}-static.tar.gz"
+default['zabbix']['agent']['prebuild_file'] = "zabbix_agent-#{version}-linux-#{version}-#{arch}-static.tar.gz"
 
-default['zabbix']['agent']['prebuild_url']  = "#{prebuild_url}#{version}/zabbix_agent-#{version}-linux-3.0-#{arch}-static.tar.gz"
+default['zabbix']['agent']['prebuild_url']  = "#{prebuild_url}#{version}/zabbix_agent-#{version}-linux-#{version}-#{arch}-static.tar.gz"
 default['zabbix']['agent']['checksum'] = 'bf2ebb48fbbca66418350f399819966e'
 
 # auto-regestration
